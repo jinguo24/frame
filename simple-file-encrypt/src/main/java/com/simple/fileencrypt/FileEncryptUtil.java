@@ -1,17 +1,25 @@
 package com.simple.fileencrypt;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
 
 public class FileEncryptUtil {
 	 Key key; 
@@ -31,7 +39,7 @@ public class FileEncryptUtil {
 	        throw new RuntimeException("Error initializing SqlMap class. Cause: " + e); 
 	    } 
 	  } 
-
+	  
 	  /** 
 	  * 文件file进行加密并保存目标文件destFile中 
 	  * 
@@ -81,9 +89,8 @@ public class FileEncryptUtil {
 		  return filepath.substring(filepath.lastIndexOf(".")+1);
 	  }
 	  
-	  
 	  public static void main(String[] args) throws Exception { 
-		  FileEncryptUtil td = new FileEncryptUtil("aaa"); 
+		  FileEncryptUtil td = new FileEncryptUtil("simplefileencryptkey"); 
 	    td.encrypt("C:\\Users\\zhengfy1\\Desktop\\PMBOK2008中文版.pdf", "C:\\Users\\zhengfy1\\Desktop\\PMBOK2008中文版_加密.pdf"); //加密 
 	    //td.decrypt("D:/加密后文件1.pdf", "D:/解密后文件1.pdf"); //解密 
 	    //System.out.println(td.getFileSubfix("C:/werwerwerwer/asdfafdsasdf/123123/rwerwer/12e78.jpg"));

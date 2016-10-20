@@ -1,10 +1,14 @@
 package com.simple.fileencrypt;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -15,11 +19,12 @@ import org.springframework.util.StringUtils;
 public class KeyCheck {
 
 	public static boolean isValid(String fileName) throws Exception {
-		String content = readFileByChars(fileName);
+		String content = readFileByLines(fileName);
+		//String content = "oChQdchPrejqlFRqmUALCFIlmUyP870m";
 		if (StringUtils.isEmpty(content)) {
 			throw new RuntimeException("密钥内容为空");
 		}
-		content = DesEncrypt.decrypt(content, Constant.KEY_ENCRYPT_DES_KEY);
+		content = DesEncrypt.decrypt(content, "simplekeyencrypt");
 		//检查mac地址
 		String[] cs = content.split(":");
 		String macs = cs[0];
@@ -61,46 +66,31 @@ public class KeyCheck {
 		return sb.toString().toUpperCase();
 	}
 	
+	public static String readFileByLines(String fileName) {  
+		 try {
+			String encoding="UTF-8";
+			 File file=new File(fileName);
+			 StringBuffer sb = new StringBuffer();
+			 if(file.isFile() && file.exists()){ //判断文件是否存在
+			     BufferedReader br=new BufferedReader(new UnicodeReader(new FileInputStream(file),encoding)); 
+			     String lineTxt = null;
+			     while((lineTxt = br.readLine()) != null){
+			    	 sb.append(lineTxt);
+			     }
+			     br.close();
+			 }
+			 return sb.toString();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+    } 
 	
-    /**
-     * 以字符为单位读取文件，常用于读文本，数字等类型的文件
-     */
-    private static String readFileByChars(String fileName) {
-        File file = new File(fileName);
-        Reader reader = null;
-        try {
-            // 一次读多个字符
-            char[] tempchars = new char[30];
-            int charread = 0;
-            reader = new InputStreamReader(new FileInputStream(fileName));
-            StringBuffer sb = new StringBuffer();
-            // 读入多个字符到字符数组中，charread为一次读取字符数
-            while ((charread = reader.read(tempchars)) != -1) {
-                // 同样屏蔽掉\r不显示
-                if ((charread == tempchars.length)
-                        && (tempchars[tempchars.length - 1] != '\r')) {
-                	sb.append(tempchars);
-                } else {
-                    for (int i = 0; i < charread; i++) {
-                        if (tempchars[i] == '\r') {
-                            continue;
-                        } else {
-                        	sb.append(tempchars[i]);
-                        }
-                    }
-                }
-            }
-            return sb.toString();
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e1) {
-                }
-            }
-        }
-        return null;
-    }
+	public static void main(String[] args) {
+		System.out.println(readFileByLines("C:\\Users\\zhengfy1\\Documents\\key.txt"));
+	}
 }

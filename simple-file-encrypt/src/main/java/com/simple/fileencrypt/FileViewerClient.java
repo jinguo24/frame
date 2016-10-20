@@ -168,10 +168,14 @@ public class FileViewerClient extends JFrame implements ActionListener{
 					FileEncryptUtil feu = new FileEncryptUtil(Constant.FILE_ENCRYPT_KEY);
 					int ri = new Random().nextInt();
 					File desfoler = new File("/temp/"+System.currentTimeMillis());
-					if (desfoler.exists()) {
+					if (!desfoler.exists()) {
 						desfoler.mkdirs();
 					}
-					String filename = System.currentTimeMillis()+""+ri+""+feu.getFileSubfix(readFilePath.getText());
+					String filename = System.currentTimeMillis()+""+ri+"."+feu.getFileSubfix(readFilePath.getText());
+					File desfile = new File(desfoler.getAbsolutePath()+"/"+filename);
+					if (!desfile.exists()) {
+						desfile.createNewFile();
+					}
 					new FileEncryptUtil(Constant.FILE_ENCRYPT_KEY).decrypt(readFilePath.getText(), desfoler.getAbsolutePath()+"/"+filename);
 					Runtime runtime = Runtime.getRuntime();  
 					//打开文件  

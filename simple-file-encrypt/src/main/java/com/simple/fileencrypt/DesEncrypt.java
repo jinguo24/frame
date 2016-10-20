@@ -1,9 +1,15 @@
 package com.simple.fileencrypt;
 
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
@@ -73,13 +79,13 @@ public class DesEncrypt {
 	//测试
 	public static void main(String args[]) {
 		//待加密内容
-		String str = "E8-B1-FC-3A-3C-71";
+		String str = "28-D2-44-FB-3D-0B";
 		//密码，长度要是8的倍数
 		String password = "simplekeyencrypt";
 		try {
 			String s = encrypt(str,password);
-			System.out.println("加密后："+s);
-			System.out.println("解密后："+decrypt(s,password));
+			System.out.println(s);
+			System.out.println(decrypt(s,password));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
