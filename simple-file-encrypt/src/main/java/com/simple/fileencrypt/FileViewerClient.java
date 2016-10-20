@@ -172,7 +172,6 @@ public class FileViewerClient extends JFrame implements ActionListener{
 					if (!desfile.exists()) {
 						desfile.createNewFile();
 					}
-					result.setText(desfile.getAbsolutePath());
 					new FileEncryptUtil(Constant.FILE_ENCRYPT_KEY).decrypt(readFilePath.getText(), desfoler.getAbsolutePath()+"/"+filename);
 					Runtime runtime = Runtime.getRuntime();  
 					//打开文件  
