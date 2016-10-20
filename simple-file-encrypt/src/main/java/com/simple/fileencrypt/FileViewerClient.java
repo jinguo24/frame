@@ -7,17 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Random;
-
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
-
-import org.springframework.util.StringUtils;
 
 public class FileViewerClient extends JFrame implements ActionListener{
 
@@ -153,9 +149,9 @@ public class FileViewerClient extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0)
 	{
-		if (StringUtils.isEmpty(keyFilePath.getText())) {
+		if (null == keyFilePath.getText() || keyFilePath.getText().trim().isEmpty()) {
 			result.setText("请选择密钥");
-		}else if (StringUtils.isEmpty(readFilePath.getText())) {
+		}else if (null == readFilePath.getText() || readFilePath.getText().trim().isEmpty()) {
 			result.setText("请选择文件");
 		}else {
 			//加载key，反解密，mac限制
@@ -176,6 +172,7 @@ public class FileViewerClient extends JFrame implements ActionListener{
 					if (!desfile.exists()) {
 						desfile.createNewFile();
 					}
+					result.setText(desfile.getAbsolutePath());
 					new FileEncryptUtil(Constant.FILE_ENCRYPT_KEY).decrypt(readFilePath.getText(), desfoler.getAbsolutePath()+"/"+filename);
 					Runtime runtime = Runtime.getRuntime();  
 					//打开文件  

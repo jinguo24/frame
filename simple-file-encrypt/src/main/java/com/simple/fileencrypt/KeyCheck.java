@@ -4,36 +4,30 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-
-import org.springframework.util.StringUtils;
-
 public class KeyCheck {
 
 	public static boolean isValid(String fileName) throws Exception {
 		String content = readFileByLines(fileName);
 		//String content = "oChQdchPrejqlFRqmUALCFIlmUyP870m";
-		if (StringUtils.isEmpty(content)) {
+		if (null == content || content.trim().isEmpty()) {
 			throw new RuntimeException("密钥内容为空");
 		}
 		content = DesEncrypt.decrypt(content, "simplekeyencrypt");
 		//检查mac地址
 		String[] cs = content.split(":");
 		String macs = cs[0];
-		if (StringUtils.isEmpty(macs)) {
+		if (null == macs || macs.trim().isEmpty()) {
 			throw new RuntimeException("没有允许的mac地址");
 		}
 		String[] ms = macs.split(",");
 		String mac = getLocalMac();
-		if (StringUtils.isEmpty(mac)) {
+		if (null == mac || mac.trim().isEmpty()) {
 			throw new RuntimeException("没有获取到本机mac地址");
 		}
 		boolean isvalid = false;
