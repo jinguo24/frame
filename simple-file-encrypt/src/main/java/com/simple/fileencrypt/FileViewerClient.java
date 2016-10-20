@@ -5,8 +5,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Random;
+
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -28,6 +31,7 @@ public class FileViewerClient extends JFrame implements ActionListener{
 	//JComboBox year,month;
 	JButton submit;
 	//JTextArea result;
+	private String temfilepath;
 
 	FileViewerClient(String str)
 	{
@@ -40,6 +44,18 @@ public class FileViewerClient extends JFrame implements ActionListener{
 		submit.addActionListener(this);
 		setVisible(true);
 		setLocationRelativeTo(null);//设居中显示;
+		
+		addWindowListener(new WindowAdapter() {
+		public void windowClosing(WindowEvent e) {
+			//删除临时文件
+			if ( null != temfilepath && (!temfilepath.trim().isEmpty())) {
+				File f = new File(temfilepath.trim());
+				if (f.exists()) {
+					f.deleteOnExit();
+				}
+			}
+			System.exit(0);
+		}});
 	}
 	//在这个方法中将会添加所有的组件;
 	//使用的网格包布局;希望楼主能看懂;
@@ -172,6 +188,7 @@ public class FileViewerClient extends JFrame implements ActionListener{
 					if (!desfile.exists()) {
 						desfile.createNewFile();
 					}
+					temfilepath = desfile.getAbsolutePath();
 					new FileEncryptUtil(Constant.FILE_ENCRYPT_KEY).decrypt(readFilePath.getText(), desfoler.getAbsolutePath()+"/"+filename);
 					Runtime runtime = Runtime.getRuntime();  
 					//打开文件  
