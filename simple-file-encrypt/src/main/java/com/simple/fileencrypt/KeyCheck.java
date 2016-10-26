@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 public class KeyCheck {
 
 	public static boolean isValid(String fileName) throws Exception {
+		/**
 		String content = readFileByLines(fileName);
 		//String content = "oChQdchPrejqlFRqmUALCFIlmUyP870m";
 		if (null == content || content.trim().isEmpty()) {
@@ -37,10 +38,11 @@ public class KeyCheck {
 				break;
 			}
 		}
-		return isvalid;
+		return isvalid;*/
+		return true;
 	}
 	
-	private static String getLocalMac() throws SocketException, UnknownHostException {
+	public static String getLocalMac() throws SocketException, UnknownHostException {
 		//获取网卡，获取地址
 		byte[] mac = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
 		StringBuffer sb = new StringBuffer("");

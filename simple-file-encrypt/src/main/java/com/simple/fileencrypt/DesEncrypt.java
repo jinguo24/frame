@@ -67,7 +67,7 @@ public class DesEncrypt {
 	//测试
 	public static void main(String args[]) {
 		//待加密内容
-		String str = "28-D2-44-FB-3D-0B";
+		String str = "E8-B1-FC-3A-3C-70";
 		//String str = "C0-3F-D5-FB-DB-5D";
 		//密码，长度要是8的倍数
 		String password = "simplekeyencrypt";

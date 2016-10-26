@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.JButton;
@@ -23,7 +25,7 @@ public class FileViewerClient extends JFrame implements ActionListener{
 	private static final long serialVersionUID = 1L;
 	GridBagLayout g=new GridBagLayout();
 	GridBagConstraints c=new GridBagConstraints();
-	JLabel perssionKeyFile,file,result;
+	JLabel perssionKeyFile,file,result,message;
 	JFileChooser keyFile, readFile;
 	JTextField keyFilePath,readFilePath;
 	JButton keyFileButton, readFileButton;
@@ -31,7 +33,7 @@ public class FileViewerClient extends JFrame implements ActionListener{
 	//JComboBox year,month;
 	JButton submit;
 	//JTextArea result;
-	private String temfilepath;
+	private List<String> temfilepath = new ArrayList<String>();
 
 	FileViewerClient(String str)
 	{
@@ -48,10 +50,14 @@ public class FileViewerClient extends JFrame implements ActionListener{
 		addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
 			//删除临时文件
-			if ( null != temfilepath && (!temfilepath.trim().isEmpty())) {
-				File f = new File(temfilepath.trim());
-				if (f.exists()) {
-					f.deleteOnExit();
+			if ( null != temfilepath && temfilepath.size() > 0 ) {
+				for (int i = 0 ; i < temfilepath.size(); i++) {
+					if (null != temfilepath.get(i)) {
+						File f = new File(temfilepath.get(i).trim());
+						if (f.exists()) {
+							f.deleteOnExit();
+						}
+					}
 				}
 			}
 			System.exit(0);
@@ -62,20 +68,20 @@ public class FileViewerClient extends JFrame implements ActionListener{
 	public void addComponent()
 	{
 		
-		perssionKeyFile = new JLabel("mac地址许可密钥：");
-		add(g,c,perssionKeyFile,0,0,1,1);
+		//perssionKeyFile = new JLabel("mac地址许可密钥：");
+		//add(g,c,perssionKeyFile,0,0,1,1);
 		
 		keyFilePath = new JTextField(30);
-		add(g,c,keyFilePath,1,0,1,1);
+		//add(g,c,keyFilePath,1,0,1,1);
 		
-		keyFileButton = new JButton("选择密钥");
-		keyFileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	chooseKeyFile();
-            }
-        });
-		add(g,c,keyFileButton,2,0,1,1);
+		//keyFileButton = new JButton("选择密钥");
+		//keyFileButton.addActionListener(new ActionListener() {
+        //    @Override
+        //    public void actionPerformed(ActionEvent e) {
+        //    	chooseKeyFile();
+        //    }
+        //});
+		//add(g,c,keyFileButton,2,0,1,1);
 		
 		file = new JLabel("选择文件：");
 		add(g,c,file,0,1,1,1);
@@ -94,6 +100,9 @@ public class FileViewerClient extends JFrame implements ActionListener{
 		
 		result = new JLabel();
 		add(g,c,result,0,2,1,1);
+		
+		message = new JLabel();
+		add(g,c,message,1,2,1,1);
 		
 		submit=new JButton("确定");
 		c.insets=new Insets(4,0,4,0);
@@ -165,18 +174,19 @@ public class FileViewerClient extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0)
 	{
-		if (null == keyFilePath.getText() || keyFilePath.getText().trim().isEmpty()) {
-			result.setText("请选择密钥");
-		}else if (null == readFilePath.getText() || readFilePath.getText().trim().isEmpty()) {
-			result.setText("请选择文件");
+		//if (null == keyFilePath.getText() || keyFilePath.getText().trim().isEmpty()) {
+		//	result.setText("请选择密钥");
+		//}else 
+		if (null == readFilePath.getText() || readFilePath.getText().trim().isEmpty()) {
+			message.setText("请选择文件");
 		}else {
-			//加载key，反解密，mac限制
+			//TODO 加载工具的配置，判断有效性
 			try {
 				boolean isvalid = KeyCheck.isValid(keyFilePath.getText());
 				if (!isvalid) {
-					result.setText("本机mac不被允许访问");
+					result.setText("不允许使用");
 				}else {
-					//反解密文件
+					//反解密文件,第一次打开把本机mac地址绑定文件
 					FileEncryptUtil feu = new FileEncryptUtil(Constant.FILE_ENCRYPT_KEY);
 					int ri = new Random().nextInt();
 					File desfoler = new File("/temp/"+System.currentTimeMillis());
@@ -188,18 +198,55 @@ public class FileViewerClient extends JFrame implements ActionListener{
 					if (!desfile.exists()) {
 						desfile.createNewFile();
 					}
-					temfilepath = desfile.getAbsolutePath();
-					new FileEncryptUtil(Constant.FILE_ENCRYPT_KEY).decrypt(readFilePath.getText(), desfoler.getAbsolutePath()+"/"+filename);
+					temfilepath.add(desfile.getAbsolutePath());
+					
+					
+					String mac = KeyCheck.getLocalMac();
+					String key = ":MAC:"+mac;
+					FileEncryptUtil fepu = new FileEncryptUtil(Constant.FILE_ENCRYPT_KEY);
+					//首先判断文件内容是否包含mac信息，如果包含，则是绑定了mac地址，如果没有，则认为是第一次访问
+					String str = fepu.getStr(readFilePath.getText(), key.length());
+					if (str.startsWith(":MAC:")&&(!str.equals(key))) {
+						message.setText("该文件已经被"+key+"绑定,不允许打开");
+						return;
+					//前面不是:MAC:打头的，认为是第一次访问
+					}else if (!str.startsWith(":MAC:")) {
+						//解密文件
+						fepu.decrypt(readFilePath.getText(), desfoler.getAbsolutePath()+"/"+filename);
+						//把文件绑定mac地址
+						String macfilename = System.currentTimeMillis()+""+ri+"_mac"+"."+feu.getFileSubfix(readFilePath.getText());
+						File macdesfile = new File(desfoler.getAbsolutePath()+"/"+macfilename);
+						if (!macdesfile.exists()) {
+							macdesfile.createNewFile();
+						}
+						temfilepath.add(macdesfile.getAbsolutePath());
+						fepu.addStr(readFilePath.getText(), macdesfile.getAbsolutePath(), key);
+						//将临时文件内容拷贝到本地文件
+						fepu.addStr(macdesfile.getAbsolutePath(), readFilePath.getText(), "");
+						
+						
+					//不是第一次，mac校验通过的	
+					}else {
+						//先把mac地址信息去掉，然后解密
+						String tempmacfilename = System.currentTimeMillis()+""+ri+"_mac_remove"+"."+feu.getFileSubfix(readFilePath.getText());
+						File tempmacdesfile = new File(desfoler.getAbsolutePath()+"/"+tempmacfilename);
+						if (!tempmacdesfile.exists()) {
+							tempmacdesfile.createNewFile();
+						}
+						temfilepath.add(tempmacdesfile.getAbsolutePath());
+						fepu.removeStr(readFilePath.getText(), tempmacdesfile.getAbsolutePath(), key);
+						fepu.decrypt(tempmacdesfile.getAbsolutePath(), desfoler.getAbsolutePath()+"/"+filename);
+					}
+					
 					Runtime runtime = Runtime.getRuntime();  
 					//打开文件  
 			        runtime.exec("rundll32 url.dll FileProtocolHandler "+desfoler.getAbsolutePath()+"/"+filename);
 				}
 			} catch (Exception e) {
-				result.setText(e.getLocalizedMessage());
+				message.setText(e.getLocalizedMessage());
 			}
 		}
 	}
-
 	
 	public static void main(String args[])
 	{
