@@ -74,7 +74,7 @@ public class DesEncrypt {
 		try {
 			String s = encrypt(str,password);
 			System.out.println(s);
-			System.out.println(decrypt(s,password));
+			System.out.println(decrypt("LRTcxXDxsuJpk3t42NhcMQ==","gaqjykey"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
