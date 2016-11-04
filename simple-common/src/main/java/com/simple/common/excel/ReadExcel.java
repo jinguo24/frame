@@ -103,7 +103,7 @@ public class ReadExcel {
             	String filefolder = ERROR_FILE_DIR+System.currentTimeMillis();
             	String fileName = PrimaryKeyUtil.getUUID()+".xlsx";
             	ExcelUtil.createFile(workbook,EnvPropertiesConfiger.getValue("uploadDir")+filefolder,fileName);
-            	return new ResponseInfo(new ResponseStatus(false,"3","读取文件失败"), filefolder+"/"+fileName);
+            	return new ResponseInfo(new ResponseStatus(false,"4","读取文件失败"), filefolder+"/"+fileName);
             }
         }
         return new ResponseInfo(new ResponseStatus(false,"读取文件失败"), "读取文件失败");
