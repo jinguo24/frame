@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
@@ -89,11 +90,11 @@ public class EsUtil {
         System.out.println("批量删除索引时间:数据量是  " + indexIdlist.size() + "记录,共用时间 -->> " + (end - start) + " 毫秒");  
 	}
 	
-	public static <T> List<T> searchList(String indexName,String type,Map<String,String> condition ,Class<T> classType) throws IOException {
+	public static <T> List<T> searchList(String indexName,String type,QueryBuilder builder ,Class<T> classType) throws IOException {
 		long start = System.currentTimeMillis();  
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
-
+		//searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
+		searchSourceBuilder.query(builder);
 		Search search = new Search.Builder(searchSourceBuilder.toString())
 		                                // multiple index or types can be added.
 		                                .addIndex(indexName)
@@ -101,7 +102,7 @@ public class EsUtil {
 		                                .addType(type)
 		                                .build();
 		SearchResult searchResult = jestClient.execute(search);
-		List<SearchResult.Hit<T, Void>> hits = searchResult.getHits(classType);
+		//List<SearchResult.Hit<T, Void>> hits = searchResult.getHits(classType);
 		// or
 		List<T> articles = searchResult.getSourceAsObjectList(classType);
 		long end = System.currentTimeMillis();  

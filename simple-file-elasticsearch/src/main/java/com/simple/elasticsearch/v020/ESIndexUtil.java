@@ -39,11 +39,11 @@ public class ESIndexUtil {
 	 * @throws Exception
 	 */
 	public static void createIndex(String indexName) throws Exception {
-		CreateIndex createIndex = new CreateIndex(indexName);  
-		JestResult result = jestClient.execute(createIndex);
-		if (result != null && !result.isSucceeded()) {
-			 throw new RuntimeException("create index error: "+result.getErrorMessage());
-		}
+		//CreateIndex createIndex = new CreateIndex(indexName);  
+		//JestResult result = jestClient.execute(createIndex);
+		//if (result != null && !result.isSucceeded()) {
+		//	 throw new RuntimeException("create index error: "+result.getErrorMessage());
+		//}
 	}
 	
 	public static void insertOrUpdateDoc(String indexName,String type,Object o) throws Exception {
@@ -60,14 +60,14 @@ public class ESIndexUtil {
 	
 	public static void batchInsertOrUpdateDoc(String indexName,String type,List<Object> list) throws Exception {
 		long start = System.currentTimeMillis();  
-		Bulk bulk = new Bulk(indexName, type); 
+		//Bulk bulk = new Bulk(indexName, type); 
 		for (int i = 0 ; i < list.size() ; i ++) {
-			bulk.addIndex(new Index.Builder(list.get(i)).build()); 
+		//	bulk.addIndex(new Index.Builder(list.get(i)).build()); 
 		}
-		JestResult result = jestClient.execute(bulk); 
-		if (result != null && !result.isSucceeded()) {
-			 throw new RuntimeException("batchInsertOrUpdate doc error: "+result.getErrorMessage());
-		}
+		//JestResult result = jestClient.execute(bulk); 
+		//if (result != null && !result.isSucceeded()) {
+		//	 throw new RuntimeException("batchInsertOrUpdate doc error: "+result.getErrorMessage());
+		//}
 		long end = System.currentTimeMillis();  
         System.out.println("创建索引时间:数据量是  " + list.size() + "记录,共用时间 -->> " + (end - start) + " 毫秒");  
 	}
@@ -81,20 +81,18 @@ public class ESIndexUtil {
 		}
 	}
 	
-	public static List searchList(String indexName,String type,EsQuery query) {
+	public static List searchList(String indexName,String type) {
 		try {  
             long start = System.currentTimeMillis();  
-            QueryBuilder queryBuilder = QueryBuilders.queryString(param);  
-            Search search = new Search(Search.createQueryWithBuilder(queryBuilder.toString()));  
-            search.addIndex("testindex");  
-            search.addType("test");  
-            JestResult result = jestClient.execute(search);  
+            //QueryBuilder queryBuilder = QueryBuilders.queryString(param);  
+            //Search search = new Search(Search.createQueryWithBuilder(queryBuilder.toString()));  
+            //search.addIndex("testindex");  
+            //search.addType("test");  
+            //JestResult result = jestClient.execute(search);  
             long end = System.currentTimeMillis();  
             System.out.println("在100万条记录中,搜索新闻,共用时间 -->> " + (end - start) + " 毫秒");  
-            return result.getSourceAsObjectList(Map.class);  
-        } catch (IOException e) {  
-            e.printStackTrace();  
-        } catch (Exception e) {  
+            //return result.getSourceAsObjectList(Map.class);  
+        }catch (Exception e) {  
             e.printStackTrace();  
         }  
         return null;
@@ -112,23 +110,21 @@ public class ESIndexUtil {
     public static List searchsNews(String param) {  
         try {  
             long start = System.currentTimeMillis();  
-            QueryBuilder queryBuilder = QueryBuilders.queryString(param).;  
-            Search search = new Search(Search.createQueryWithBuilder(queryBuilder.toString()));  
-            search.addIndex("testindex");  
-            search.addType("test");  
-            JestResult result = jestClient.execute(search);  
+            //QueryBuilder queryBuilder = QueryBuilders.queryString(param).;  
+            //Search search = new Search(Search.createQueryWithBuilder(queryBuilder.toString()));  
+            //search.addIndex("testindex");  
+            //search.addType("test");  
+            //JestResult result = jestClient.execute(search);  
             long end = System.currentTimeMillis();  
             System.out.println("在100万条记录中,搜索新闻,共用时间 -->> " + (end - start) + " 毫秒");  
-            return result.getSourceAsObjectList(Map.class);  
-        } catch (IOException e) {  
-            e.printStackTrace();  
+            //return result.getSourceAsObjectList(Map.class);  
         } catch (Exception e) {  
             e.printStackTrace();  
         }  
         return null;  
     }  
     public static void main(String[] args)throws Exception {
-    	builderSearchIndex();
+    	//builderSearchIndex();
     	String param = "个人";  
         List news = searchsNews(param);  
         System.out.println("id   标题                                           内容");  
