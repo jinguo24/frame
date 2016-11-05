@@ -12,11 +12,10 @@ import io.searchbox.core.SearchResult;
 import io.searchbox.indices.CreateIndex;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 public class EsUtil {
@@ -49,7 +48,7 @@ public class EsUtil {
 		System.out.println("创建索引时间: 共用时间 -->> " + (end - start) + " 毫秒");  
 	}
 	
-	public static void batchInsertOrUpdateDoc(String indexName,String type,List<Object> list) throws Exception {
+	public static void batchInsertOrUpdateDoc(String indexName,String type,List list) throws Exception {
 		long start = System.currentTimeMillis();  
 		Builder builder = new Bulk.Builder().defaultIndex(indexName).defaultType(type);
 		for (int i = 0 ;i < list.size() ; i ++) {
@@ -123,5 +122,55 @@ public class EsUtil {
 		return article;
 	}
 	
+	
+	public static void main(String[] args) {
+		try {
+			//createIndex("testindex1");
+			
+			Test t = new Test();
+			t.setTestId("6");
+			t.setName("哈哈ssss");
+			t.setDesc("哈哈是个好同志ssss");
+			
+			//insertOrUpdateDoc("testindex1","employ",t);
+			
+			List<Test> list = new ArrayList<Test>();
+			Test t0 = new Test();
+			t0.setTestId("1");
+			t0.setName("金果ssss");
+			t0.setDesc("金果是个好同志sss");
+			list.add(t0);
+			
+			Test t1 = new Test();
+			t1.setTestId("2");
+			t1.setName("方圆ss");
+			t1.setDesc("方圆是个好同志ss");
+			list.add(t1);
+			
+			Test t2 = new Test();
+			t2.setTestId("3");
+			t2.setName("武鹏ss");
+			t2.setDesc("武鹏是个好同志ss");
+			list.add(t2);
+			//batchInsertOrUpdateDoc("testindex1","employ",list);
+			
+			//deleteDoc("testindex1","employ","6");
+			List<String> idlist = new ArrayList<String>();
+			idlist.add("1");
+			idlist.add("2");
+			idlist.add("3");
+			//batchDeleteDoc("testindex1","employ", idlist);
+			Test st = searchById("testindex1","employ", "6", Test.class);
+			System.out.println(st.getTestId()+">>"+st.getName()+">>"+st.getDesc());
+			
+			
+			searchList("testindex1","employ", builder, Test.class);
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 }
