@@ -1,4 +1,4 @@
-package com.simple.elasticsearch;
+package com.simple.elasticsearch.v020;
 
 import java.io.Serializable;
 

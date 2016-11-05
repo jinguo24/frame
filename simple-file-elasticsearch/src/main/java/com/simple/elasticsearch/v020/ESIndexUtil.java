@@ -1,4 +1,4 @@
-package com.simple.elasticsearch;
+package com.simple.elasticsearch.v020;
 
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
@@ -47,15 +47,19 @@ public class ESIndexUtil {
 	}
 	
 	public static void insertOrUpdateDoc(String indexName,String type,Object o) throws Exception {
+		long start = System.currentTimeMillis();  
 		Index.Builder builder = new Index.Builder(o);
 		Index index = builder.index(indexName).type(type).build();
 		JestResult result = jestClient.execute(index);
 		if (result != null && !result.isSucceeded()) {
 			 throw new RuntimeException("insertOrUpdate doc error: "+result.getErrorMessage());
 		}
+		long end = System.currentTimeMillis();  
+		System.out.println("创建索引时间: 共用时间 -->> " + (end - start) + " 毫秒");  
 	}
 	
 	public static void batchInsertOrUpdateDoc(String indexName,String type,List<Object> list) throws Exception {
+		long start = System.currentTimeMillis();  
 		Bulk bulk = new Bulk(indexName, type); 
 		for (int i = 0 ; i < list.size() ; i ++) {
 			bulk.addIndex(new Index.Builder(list.get(i)).build()); 
@@ -64,6 +68,8 @@ public class ESIndexUtil {
 		if (result != null && !result.isSucceeded()) {
 			 throw new RuntimeException("batchInsertOrUpdate doc error: "+result.getErrorMessage());
 		}
+		long end = System.currentTimeMillis();  
+        System.out.println("创建索引时间:数据量是  " + list.size() + "记录,共用时间 -->> " + (end - start) + " 毫秒");  
 	}
 	
 	public static void deleteDoc(String indexName,String type,String indexId) throws Exception {
@@ -75,40 +81,27 @@ public class ESIndexUtil {
 		}
 	}
 	
-	 
-	
-	
-	
-	/** 
-     * 创建es news索引 
-     */  
-    public static void builderSearchIndex() {  
-        int num = 10000;  
-        long start = System.currentTimeMillis();  
-        try {  
-            // 如果索引存在,删除索引  
-            DeleteIndex deleteIndex = new DeleteIndex("testindex","test");  
-            jestClient.execute(deleteIndex);  
-            // 创建索引  
-            CreateIndex createIndex = new CreateIndex("testindex");  
-            jestClient.execute(createIndex);  
-            // Bulk 两个参数1:索引名称2:类型名称(用文章(article)做类型名称)  
-            Bulk bulk = new Bulk("testindex", "test");  
-            // 添加添加100万条假数据去服务端(ES)  
-            for (int i = 0; i < num; i++) {  
-            	Map map = new HashMap();
-            	map.put("id", i+1);
-            	map.put("title", "hahhahahha_"+i);
-            	map.put("desc", "desc_"+i);
-                bulk.addIndex(new Index.Builder(map).build());  
-            }  
-            jestClient.execute(bulk); 
+	public static List searchList(String indexName,String type,EsQuery query) {
+		try {  
+            long start = System.currentTimeMillis();  
+            QueryBuilder queryBuilder = QueryBuilders.queryString(param);  
+            Search search = new Search(Search.createQueryWithBuilder(queryBuilder.toString()));  
+            search.addIndex("testindex");  
+            search.addType("test");  
+            JestResult result = jestClient.execute(search);  
+            long end = System.currentTimeMillis();  
+            System.out.println("在100万条记录中,搜索新闻,共用时间 -->> " + (end - start) + " 毫秒");  
+            return result.getSourceAsObjectList(Map.class);  
+        } catch (IOException e) {  
+            e.printStackTrace();  
         } catch (Exception e) {  
             e.printStackTrace();  
         }  
-        long end = System.currentTimeMillis();  
-        System.out.println("创建索引时间:数据量是  " + num + "记录,共用时间 -->> " + (end - start) + " 毫秒");  
-    }  
+        return null;
+	}
+	
+	
+	
     
     /** 
      * 搜索新闻 
@@ -119,7 +112,7 @@ public class ESIndexUtil {
     public static List searchsNews(String param) {  
         try {  
             long start = System.currentTimeMillis();  
-            QueryBuilder queryBuilder = QueryBuilders.queryString(param);  
+            QueryBuilder queryBuilder = QueryBuilders.queryString(param).;  
             Search search = new Search(Search.createQueryWithBuilder(queryBuilder.toString()));  
             search.addIndex("testindex");  
             search.addType("test");  
