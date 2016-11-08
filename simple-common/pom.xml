@@ -272,27 +272,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- lucene -->
-		<dependency>
-		  <groupId>org.apache.lucene</groupId>
-		  <artifactId>lucene-analyzers-common</artifactId>
-		  <version>4.10.2</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.apache.lucene</groupId>
-		  <artifactId>lucene-core</artifactId>
-		  <version>4.10.2</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.apache.lucene</groupId>
-		  <artifactId>lucene-queryparser</artifactId>
-		  <version>4.10.2</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.apache.lucene</groupId>
-		  <artifactId>lucene-sandbox</artifactId>
-		  <version>4.10.2</version>
-		</dependency>
 		<!-- mongo -->
 		<dependency>
 			<groupId>org.mongodb</groupId>

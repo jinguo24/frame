@@ -10,12 +10,15 @@ import io.searchbox.core.Index;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import io.searchbox.indices.CreateIndex;
+import io.searchbox.indices.DeleteIndex;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 public class EsUtil {
@@ -33,6 +36,13 @@ public class EsUtil {
 		JestResult result = jestClient.execute(new CreateIndex.Builder(indexName).build());
 		if (result != null && !result.isSucceeded()) {
 			 throw new RuntimeException("create index error: "+result.getErrorMessage());
+		}
+	}
+	
+	public static void deleteIndex(String indexName) throws IOException {
+		JestResult result = jestClient.execute(new DeleteIndex.Builder(indexName).build());
+		if (result != null && !result.isSucceeded()) {
+			 throw new RuntimeException("delete index error: "+result.getErrorMessage());
 		}
 	}
 	
@@ -89,9 +99,9 @@ public class EsUtil {
         System.out.println("批量删除索引时间:数据量是  " + indexIdlist.size() + "记录,共用时间 -->> " + (end - start) + " 毫秒");  
 	}
 	
-	public static <T> List<T> searchList(String indexName,String type,QueryBuilder builder ,Class<T> classType) throws IOException {
+	public static <T> List<T> searchList(String indexName,String type,int from,int size,QueryBuilder builder ,Class<T> classType) throws IOException {
 		long start = System.currentTimeMillis();  
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().from(from).size(size);
 		//searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 		searchSourceBuilder.query(builder);
 		Search search = new Search.Builder(searchSourceBuilder.toString())
@@ -107,9 +117,6 @@ public class EsUtil {
 		long end = System.currentTimeMillis();  
         System.out.println("批量查询时间:数据量是  " + articles.size() + "记录,共用时间 -->> " + (end - start) + " 毫秒");  
 		return articles;
-		
-		
-		
 	}
 	
 	public static <T> T searchById(String indexName,String type,String indexId,Class<T> classType) throws IOException {
@@ -136,19 +143,19 @@ public class EsUtil {
 			
 			List<Test> list = new ArrayList<Test>();
 			Test t0 = new Test();
-			t0.setTestId("1");
+			t0.setTestId("11");
 			t0.setName("金果ssss");
 			t0.setDesc("金果是个好同志sss");
 			list.add(t0);
 			
 			Test t1 = new Test();
-			t1.setTestId("2");
+			t1.setTestId("21");
 			t1.setName("方圆ss");
 			t1.setDesc("方圆是个好同志ss");
 			list.add(t1);
 			
 			Test t2 = new Test();
-			t2.setTestId("3");
+			t2.setTestId("31");
 			t2.setName("武鹏ss");
 			t2.setDesc("武鹏是个好同志ss");
 			list.add(t2);
@@ -160,12 +167,17 @@ public class EsUtil {
 			idlist.add("2");
 			idlist.add("3");
 			//batchDeleteDoc("testindex1","employ", idlist);
-			Test st = searchById("testindex1","employ", "6", Test.class);
-			System.out.println(st.getTestId()+">>"+st.getName()+">>"+st.getDesc());
+			//Test st = searchById("testindex1","employ", "6", Test.class);
+			//System.out.println(st.getTestId()+">>"+st.getName()+">>"+st.getDesc());
 			
-			
-			searchList("testindex1","employ", builder, Test.class);
-			
+			QueryBuilder builder = QueryBuilders.matchQuery("name", "今天的水果真好吃");
+			QueryBuilder builder0 = QueryBuilders.matchQuery("desc", "大鹏展翅");
+			QueryBuilder idbuilder = QueryBuilders.matchQuery("testId", String.valueOf("1"));
+			QueryBuilder bu = QueryBuilders.boolQuery().must(idbuilder).should(builder).should(builder0);
+			List<Test> tlist=  searchList("testindex1","employ",0,100, bu, Test.class);
+			for ( int i = 0 ; i < tlist.size(); i ++) {
+				System.out.println(tlist.get(i).getTestId()+">>>"+tlist.get(i).getName());
+			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
