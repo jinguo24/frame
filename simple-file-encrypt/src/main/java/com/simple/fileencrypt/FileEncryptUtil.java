@@ -57,6 +57,30 @@ public class FileEncryptUtil {
 	  } 
 	  
 	  /** 
+		  * 文件file进行加密并保存目标文件destFile中 
+		  * 
+		  * @param file   要加密的文件 如c:/test/srcFile.txt 
+		  * @param destFile 加密后存放的文件名 如c:/加密后文件.txt 
+		  * @param addtional 额外的字符串，加到文件头部
+		  */ 
+	  public void encrypt(InputStream is, String destFile) throws Exception { 
+		    Cipher cipher = Cipher.getInstance("DES"); 
+		    // cipher.init(Cipher.ENCRYPT_MODE, getKey()); 
+		    cipher.init(Cipher.ENCRYPT_MODE, this.key); 
+		    //InputStream is = new FileInputStream(file); 
+		    OutputStream out = new FileOutputStream(destFile); 
+		    CipherInputStream cis = new CipherInputStream(is, cipher); 
+		    byte[] buffer = new byte[1024]; 
+		    int r; 
+	    	while ((r = cis.read(buffer)) > 0) { 
+		        out.write(buffer, 0, r); 
+		    }
+		    cis.close(); 
+		    is.close(); 
+		    out.close(); 
+	  } 
+	  
+	  /** 
 	  * 文件采用DES算法解密文件 
 	  * 
 	  * @param file 已加密的文件 如c:/加密后文件.txt 

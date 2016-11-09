@@ -22,6 +22,7 @@ public class FileUploadUtil {
 
 	private static final String UPLOAD_TEMP_DIR = "/upload/temp/";
 	public static final String UPLOAD_IMAGE_DIR = "/upload/images/";
+	public static final String UPLOAD_ENCRYPT_DIR = "/upload/ept/";
 	/**
 	 * 流传文件
 	 * @param request
