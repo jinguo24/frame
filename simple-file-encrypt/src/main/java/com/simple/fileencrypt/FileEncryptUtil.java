@@ -1,7 +1,7 @@
 package com.simple.fileencrypt;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,14 +22,28 @@ public class FileEncryptUtil {
 	  * 根据参数生成KEY 
 	  */ 
 	  private void getKey(String strKey) { 
-	    try { 
-	        KeyGenerator _generator = KeyGenerator.getInstance("DES"); 
-	        _generator.init(new SecureRandom(strKey.getBytes())); 
-	        this.key = _generator.generateKey(); 
-	        _generator = null; 
-	    } catch (Exception e) { 
-	        throw new RuntimeException("Error initializing SqlMap class. Cause: " + e); 
-	    } 
+		  try {  
+	            KeyGenerator _generator = KeyGenerator.getInstance("DES");  
+	            //防止linux下 随机生成key   
+	            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG" );  
+	            secureRandom.setSeed(strKey.getBytes());  
+	            _generator.init(56,secureRandom);  
+	            this.key = _generator.generateKey();  
+	            _generator = null;  
+	        } catch (Exception e) {  
+	            throw new RuntimeException(  
+	                    "Error initializing SqlMap class. Cause: " + e);  
+	        }  
+		  
+//	    try { 
+//	        KeyGenerator _generator = KeyGenerator.getInstance("DES"); 
+//	        _generator.init(new SecureRandom());
+//	        _generator.init(new SecureRandom(new String(strKey.getBytes(),"utf-8").getBytes())); 
+//	        this.key = _generator.generateKey(); 
+//	        _generator = null; 
+//	    } catch (Exception e) { 
+//	        throw new RuntimeException("Error initializing SqlMap class. Cause: " + e); 
+//	    } 
 	  } 
 	  
 	  /** 
@@ -48,7 +62,7 @@ public class FileEncryptUtil {
 	    CipherInputStream cis = new CipherInputStream(is, cipher); 
 	    byte[] buffer = new byte[1024]; 
 	    int r; 
-    	while ((r = cis.read(buffer)) > 0) { 
+    	while ((r = cis.read(buffer)) != -1) { 
 	        out.write(buffer, 0, r); 
 	    }
 	    cis.close(); 
@@ -72,7 +86,7 @@ public class FileEncryptUtil {
 		    CipherInputStream cis = new CipherInputStream(is, cipher); 
 		    byte[] buffer = new byte[1024]; 
 		    int r; 
-	    	while ((r = cis.read(buffer)) > 0) { 
+	    	while ((r = cis.read(buffer)) != -1) {
 		        out.write(buffer, 0, r); 
 		    }
 		    cis.close(); 
@@ -176,7 +190,10 @@ public class FileEncryptUtil {
 	  
 	  public static void main(String[] args) throws Exception { 
 		  FileEncryptUtil td = new FileEncryptUtil("simplefileencryptkey"); 
-		  td.encrypt("C:\\Users\\zhengfy1\\Desktop\\PMBOK2008中文版.pdf", "C:\\Users\\zhengfy1\\Desktop\\PMBOK2008中文版_加密.pdf"); //加密 
+		  //File f = new File("C:\\Users\\zhengfy1\\Desktop\\PMBOK2008中文版.pdf");
+		  td.encrypt("C:\\Users\\zhengfy1\\Downloads\\1_temp.pdf", "C:\\Users\\zhengfy1\\Downloads\\1_e.pdf"); //加密
+		  
+		  //td.decrypt("C:\\Users\\zhengfy1\\Downloads\\3fc5bfc1-3e8a-4495-8a61-6ad475203993_e.pdf", "C:\\Users\\zhengfy1\\Downloads\\3fc5bfc1-3e8a-4495-8a61-6ad475203993_de.pdf");
 		  //td.addStr("C:\\Users\\zhengfy1\\Desktop\\PMBOK2008中文版.pdf", "C:\\Users\\zhengfy1\\Desktop\\PMBOK2008中文版_加密_add.pdf", ":MAC:E8-B1-FC-3A-3C-70");
 		  //td.removeStr("C:\\Users\\zhengfy1\\Desktop\\PMBOK2008中文版_加密_add.pdf", "C:\\Users\\zhengfy1\\Desktop\\PMBOK2008中文版_加密_add_remove.pdf", ":MAC:E8-B1-FC-3A-3C-70");
 		  //System.out.println(td.getStr("C:\\Users\\zhengfy1\\Desktop\\PMBOK2008中文版_加密_add.pdf", 10));

@@ -1,9 +1,29 @@
 package com.simple.common.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 public class DateUtil {
+	
+	public static Date getAllDate(String time) {
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static Date getDate(String time) {
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd").parse(time);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static String date2String(Date date) {
 		return new SimpleDateFormat("yyyy-MM-dd").format(date);
 	}

@@ -18,8 +18,8 @@ import java.util.List;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.highlight.HighlightBuilder;
 
 public class EsUtil {
 	private static JestClient jestClient = EsFactory.getClient();
@@ -102,6 +102,13 @@ public class EsUtil {
 	public static <T> List<T> searchList(String indexName,String type,int from,int size,QueryBuilder builder ,Class<T> classType) throws IOException {
 		long start = System.currentTimeMillis();  
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().from(from).size(size);
+		// 设置是否按查询匹配度排序
+		searchSourceBuilder.explain(true);
+		//设置高亮
+		HighlightBuilder highlightBuilder = new HighlightBuilder();
+		highlightBuilder.preTags("<span style=\"color:red\">").postTags("</span>");
+		searchSourceBuilder.highlight(highlightBuilder);
+		
 		//searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 		searchSourceBuilder.query(builder);
 		Search search = new Search.Builder(searchSourceBuilder.toString())
