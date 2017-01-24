@@ -7,6 +7,7 @@ public class ResponseStatus implements Serializable {
 	private static final long serialVersionUID = 6180026101789656042L;
 	private static final String SUCCESS  = "1";
 	private static final String ERROR = "2";
+	private static final String NOT_LOGIN = "3";
 
 	private boolean state;
 
@@ -17,7 +18,14 @@ public class ResponseStatus implements Serializable {
 	public ResponseStatus() {
 
 	}
-
+	
+	public ResponseStatus notLogin() {
+		this.state = false;
+		this.code = NOT_LOGIN;
+		this.message = "unlogin.";
+		return this;
+	}
+	
 	public ResponseStatus(boolean state, String code, String message) {
 		this.state = state;
 		this.code = code;

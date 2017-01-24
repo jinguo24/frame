@@ -21,20 +21,20 @@ public class SmsClient {
 		return SmsClientOverage.queryOverage(OVERAGE_URL, SEND_USER_ID, SEND_ACCOUNT, SEND_PASSWORD);
 	}
 	
-	public static SmsResult sendMsg(String phone,String content) {
-		return getMessageFromSms(SmsClientAccessTool.getInstance().doAccessHTTPGet(SEND_URL+"?"+getSendParam(phone,content), null));
+	public static SmsResult sendMsg(String pre,String phone,String content) {
+		return getMessageFromSms(SmsClientAccessTool.getInstance().doAccessHTTPGet(SEND_URL+"?"+getSendParam(pre,phone,content), null));
 	}
 	
-	private static String getSendParam(String phone,String content) {
+	private static String getSendParam(String pre,String phone,String content) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("action=send&userid=").append(SEND_USER_ID).append("&account=").append(SEND_ACCOUNT)
 		.append("&password=").append(SEND_PASSWORD).append("&mobile=").append(phone)
-		.append("&content=").append("【易代销】").append(content).append("&sendTime=&extno=");
+		.append("&content=").append(pre).append(content).append("&sendTime=&extno=");
 		return sb.toString();
 	}
 	
 	public static void main(String[] args) {
-		SmsResult sr = SmsClient.sendMsg("18600671341", "请联系15210931700发货");
+		SmsResult sr = SmsClient.sendMsg("【易代销】","18600671341", "请联系15210931700发货");
 		System.out.println(sr.getMsg()+">>>"+sr.isSuccess());
 		SmsResult sr0 = getOverage();
 		System.out.println(sr0.getMsg()+">>>>"+sr0.getData());
@@ -62,12 +62,12 @@ public class SmsClient {
 		return sr;
 	}
 	
-	public static void sendAdminMsg(String content) {
+	public static void sendAdminMsg(String pre,String content) {
 		String adminPhone = EnvPropertiesConfiger.getValue("adminPhone");
 		if (!StringUtils.isEmpty(adminPhone)) {
 			String[] phones = adminPhone.split(",");
 			for (int i = 0 ; i< phones.length ; i ++) {
-				sendMsg(phones[i],content);
+				sendMsg(pre,phones[i],content);
 			}
 		}
 	}
