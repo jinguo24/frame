@@ -18,9 +18,9 @@ public class Thumbnailator {
 
 	public static void main(String[] args) {
 		try {
-			File f = new File("D:\\1.JPG");
-			cutSquareImage(f,220,220,0.1f,0,"D:\\1_1_1_220.jpg");
-			//scale("D:\\2_1_1.jpg",220,220,0.1f,0,"D:\\2_1_1_220.jpg");
+			File f = new File("D:\\1.PNG");
+			//cutSquareImage(f,220,220,0.1f,0,"D:\\1_1_1_220.jpg");
+			scale("D:\\1.PNG",210,100,0.1f,0,"D:\\2_1_1_220.jpg");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
