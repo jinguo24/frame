@@ -103,6 +103,15 @@ public class DateUtil {
 		return getNewDateBySeconds(date,24*60*60*days);
 	}
 	
+	public static Date getDateBegin(Date date) {
+		Calendar cd = Calendar.getInstance();
+		cd.setTime(date);
+		cd.set(Calendar.HOUR_OF_DAY, 0);
+		cd.set(Calendar.MINUTE, 0);
+		cd.set(Calendar.SECOND, 0);
+		return cd.getTime();
+	}
+	
 	public static void main(String[] args) {
 		System.out.println(getNowWeekBegin());
 		System.out.println(getNowWeekEnd());
@@ -110,5 +119,8 @@ public class DateUtil {
 		System.out.println(getNowMonthEnd());
 		System.out.println(getNowMonth());
 		System.out.println(getNewDateByDays(new Date(),1));
+		System.out.println(getDateBegin(new Date()));
+		System.out.println(getDateBegin(new Date()));
+		//1486915200381
 	}
 }
