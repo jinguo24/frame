@@ -3,19 +3,14 @@ package com.simple.weixin.auth;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.springframework.util.StringUtils;
-
 import com.simple.common.config.EnvPropertiesConfiger;
 import com.simple.common.util.PrimaryKeyUtil;
-import com.simple.weixin.pay.PayCommonUtil;
 import com.simple.weixin.util.HttpUtil;
 import com.simple.weixin.util.Sha1Util;
 
@@ -126,6 +121,34 @@ public class WeiXinHelper {
 		}
 		return userinfo;
 	}
+	
+	/**
+	 * 
+	 * @Description: 获取用户信息，需要用户关注服务号
+	 * @param openId
+	 */
+	public static UserInfoIsFollow getUserInfoIsFollow(String openId) {
+		UserInfoIsFollow userInfo = null;
+		StringBuilder getUrl = new StringBuilder();
+		getUrl.append(user_info_is_follow_url)
+			.append("?access_token=")
+			.append(getGlobalAccessToken())
+			.append("&openid=")
+			.append(openId)
+			.append("&lang=zh_CN");
+		HttpGet get = new HttpGet(getUrl.toString());
+		try {
+			HttpResponse response = HttpUtil.execute(get);
+			String result = EntityUtils.toString(response.getEntity(), "utf-8");
+			//logger.info("request success, result = {}.", result);
+			userInfo = UserInfoIsFollow.analyticToken(result);
+		} catch (Exception e) {
+			e.printStackTrace();
+			//logger.error("request user info fail.", e);
+		}
+		return userInfo;
+	}
+	
 	
 	public static void main(String[] args) {
 		String url = "https://api.weixin.qq.com/sns/userinfo?access_token=jYEbE2U6RTuhMRYC3VYtZXrqFdA-ZUchcIJeLE4EY5mZQPvVtFeiPKB3hYIaRy6d1CLX8Nzk3gQ9CUP7msoJTBwNwZ5-HxrgVTfqjvo_VO8&openid=o7P8uxJVRBZFh7Z9FKj2liylbpwY&lang=zh_CN";

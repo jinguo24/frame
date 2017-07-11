@@ -29,7 +29,7 @@ public class PatternUtils
 
   public static void main(String[] args)
   {
-    PatternUtils up = new PatternUtils("/aa/*/dad/*.do");
+    PatternUtils up = new PatternUtils("/aa/**.do");
     PatternUtils sp = new PatternUtils("/aa/aad/dasd/getHomePage.do");
     System.out.println(up.implies(sp));
   }

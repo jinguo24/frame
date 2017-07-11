@@ -44,9 +44,9 @@ public class DateUtil {
 		return date2AllString(cd.getTime());
 	}
 	private static void setToFirstDay(Calendar calendar) {
-	        while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
-	            calendar.add(Calendar.DATE, -1);
-	        }
+        while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
+            calendar.add(Calendar.DATE, -1);
+        }
 	}
 	
 	public static String getNowWeekEnd() {
